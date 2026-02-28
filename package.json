@@ -1,6 +1,6 @@
 {
   "name": "neo-open-api",
-  "version": "1.1.11",
+  "version": "1.2.1",
   "description": "Neo OpenAPI SDK",
   "keywords": [
     "neo open api",
@@ -12,7 +12,7 @@
   "module": "dist/index.esm.min.js",
   "scripts": {
     "linkDebug": "neo linkDebug",
-    "build2lib": "neo build2lib",
+    "build2lib": "neo build2lib && npm run build2esm",
     "build2esm": "neo build2esm",
     "format": "prettier --write \"src/**/**/*.{js,jsx,ts,tsx,vue,scss,json}\""
   },
@@ -38,15 +38,15 @@
     "url": "https://github.com/xsy-neoui/neo-open-api/issues"
   },
   "dependencies": {
-    "axios": "^0.27.2",
-    "lodash": "^4.17.21"
+    "axios": "^1.7.0",
+    "lodash": "^4.17.23"
   },
   "devDependencies": {
-    "@commitlint/cli": "^8.3.5",
-    "@commitlint/config-conventional": "^9.1.1",
+    "@commitlint/cli": "^18.0.0",
+    "@commitlint/config-conventional": "^18.0.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.9",
-    "neo-cmp-cli": "^1.9.7",
+    "neo-cmp-cli": "^1.12.1",
     "prettier": "^2.0.5",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"

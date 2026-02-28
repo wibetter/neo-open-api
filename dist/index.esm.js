@@ -465,7 +465,15 @@ var regeneratorExports = requireRegenerator();
 var _regeneratorRuntime = /*@__PURE__*/getDefaultExportFromCjs(regeneratorExports);
 
 // 白名单: 默认允许使用的平台数据接口
-var whitelist = ['/rest/data/v2.0/scripts', '/rest/metadata/v2.0/dx/logic/extpoints/openapi', '/rest/data/v2.0/xobjects', '/rest/data/v2/query', '/rest/metadata/v2.0/xobjects/filter' // 获取实体列表
+var whitelist = ['/rest/data/v2.0/scripts',
+// 运行自定义 API
+'/rest/metadata/v2.0/dx/logic/extpoints/openapi',
+// 获取自定义 API 列表
+'/rest/data/v2.0/xobjects',
+// 实体类 open api
+'/rest/data/v2/query',
+// 通用查询接口
+'/rest/metadata/v2.0/xobjects/filter' // 获取实体列表
 ];
 var isAllowDataApi = function isAllowDataApi(api) {
   // 判断是否在浏览器环境中
