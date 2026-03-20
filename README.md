@@ -51,7 +51,7 @@ const result = await request({
 ```typescript
 import { xObject } from 'neo-open-api';
 
-// 基本查询
+// 基本查询（无 where）
 const result = await xObject.query({
   xObjectApiKey: 'xxObject', // 业务对象 API Key
   fields: ['name', 'phone', 'email'], // 查询字段
@@ -59,11 +59,33 @@ const result = await xObject.query({
   pageSize: 10, // 每页数量（可选）
   orderBy: 'name asc' // 排序条件（可选）
 });
+
+// where 为字符串：与通用查询 SQL 语法一致，直接拼接到 `select ... from ...` 之后
+const byString = await xObject.query({
+  xObjectApiKey: 'xxObject',
+  fields: ['name', 'city'],
+  where: "city = '北京' and name like '张%'",
+  page: 1,
+  pageSize: 20
+});
+
+// where 为字符串数组：多项会用 ` and ` 连接，便于按条件拼装、复用片段
+const byArray = await xObject.query({
+  xObjectApiKey: 'xxObject',
+  fields: ['name', 'status'],
+  where: ["status = '生效'", "name like '李%'"],
+  page: 1,
+  pageSize: 20
+});
+// 上述数组写法等价于 where: "status = '生效' and name like '李%'"
 ```
 
 **参数说明：**
 - `xObjectApiKey`: 业务对象的 API Key
 - `fields`: 需要查询的字段数组，会自动添加 'id' 字段
+- `where`（可选）: 过滤条件。
+  - **字符串**：完整 `WHERE` 子句内容（不含关键字 `where`），语法与平台通用查询一致，支持 `=`、`!=`、`like`、`in`、`and`、`or` 等（详见接口注释）。
+  - **字符串数组**：每个元素为一段条件表达式；SDK 会用 ` and ` 按顺序拼接。空串、`null`、`undefined` 会被忽略。若需 `or` 或复杂嵌套，请使用字符串形式在一条表达式里写出，例如 `(a = 1 or b = 2) and c = 3`。
 - `page`: 页码，默认为 1
 - `pageSize`: 每页数量，默认为 10
 - `orderBy`: 排序条件，如 'name asc' 或 'createdTime desc'

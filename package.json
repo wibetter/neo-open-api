@@ -1,6 +1,6 @@
 {
   "name": "neo-open-api",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Neo OpenAPI SDK",
   "keywords": [
     "neo open api",
@@ -46,7 +46,7 @@
     "@commitlint/config-conventional": "^18.0.0",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.9",
-    "neo-cmp-cli": "^1.12.1",
+    "neo-cmp-cli": "^1.12.8",
     "prettier": "^2.0.5",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
