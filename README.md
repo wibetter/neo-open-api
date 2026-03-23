@@ -127,7 +127,7 @@ const result = await xObject.getEntityTypeList('xObjectApiKey', {
 }
 ```
 
-#### 3. 获取对象列表
+#### 3. 获取实体列表
 获取系统中的对象列表，支持标准对象和自定义对象。
 
 ```typescript

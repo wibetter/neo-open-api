@@ -1,4 +1,5 @@
-import { xObject, customApi, request } from '../src/main';
+// import { xObject, customApi, request } from '../src/main';
+import { xObject } from '../dist/index.esm.min.js';
 
 /**
  * 测试 Neo OpenAPI
@@ -113,6 +114,7 @@ const result = await xObject.delete('customContact__c', newContact.id);
 console.log('result:', result);
 */
 
+/*
 // 获取自定义API列表
 const {data: apiList} = await customApi.getList({
   pageNo: 1,
@@ -159,3 +161,25 @@ const result5 = await request({
   method: 'get',
 });
 console.log('result5:', result5);
+*/
+
+const result6 = xObject.query({
+  xObjectApiKey: "AssetItem__c",
+  fields: [
+      "name",
+      "categoryId__c",
+      "status__c",
+      "serialNumber__c",
+      "purchaseDate__c",
+      "productIMG__c"
+  ],
+  pageSize: 50,
+  where: [
+      // "categoryId__c = 4247129080159816",
+      // "status__c = 1"
+      "(name like 'Mac%' or serialNumber__c like 'Mac%')"
+  ]
+});
+
+console.log('result6:', result6);
+

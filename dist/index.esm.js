@@ -628,6 +628,7 @@ var queryXObjectData = /*#__PURE__*/function () {
            * `where` 可为字符串，或字符串数组（多项默认以 and 连接，等价于手写 `a and b`）。
            */
           whereClause = normalizeWhere(curOptions.where);
+          console.log('whereClause:', whereClause);
           if (whereClause) {
             querySql += " where " + whereClause;
           }
