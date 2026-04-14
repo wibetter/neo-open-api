@@ -41,11 +41,6 @@ export const queryXObjectData = async (options?: any) => {
   // 构建 SQL 查询
   let querySql = `select ${fields.join(',')} from ${xObjectApiKey}`;
 
-  // 添加排序条件（如果有的话）
-  if (curOptions.orderBy) {
-    querySql += ` order by ${curOptions.orderBy}`;
-  }
-
   /**
    * 添加过滤条件（如果有的话）
    * 支持的操作符包括：=、!=、like、not like、not in、is not null、is null、>、<、<>、>=、<=、in、between ... and ...。
@@ -60,9 +55,14 @@ export const queryXObjectData = async (options?: any) => {
    * `where` 可为字符串，或字符串数组（多项默认以 and 连接，等价于手写 `a and b`）。
    */
   const whereClause = normalizeWhere(curOptions.where);
-  console.log('whereClause:', whereClause);
+
   if (whereClause) {
     querySql += ` where ${whereClause}`;
+  }
+
+  // 添加排序条件（如果有的话）
+  if (curOptions.orderBy) {
+    querySql += ` order by ${curOptions.orderBy}`;
   }
 
   if (curOptions.page || curOptions.pageSize) {

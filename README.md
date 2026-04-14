@@ -8,40 +8,7 @@ Neo OpenAPI SDK 仅支持平台端（NeoCRM）使用，脱离平台需 使用 OA
 npm install --save neo-open-api
 ```
 
-
 ## 使用 Neo OpenAPI SDK 提供的请求方法
-
-### 基础请求工具
-
-#### request
-基于 axios 封装的通用请求工具，支持 GET、POST、PATCH、DELETE 等请求方法。
-
-```typescript
-import { request } from 'neo-open-api';
-
-// 基本用法
-const result = await request({
-  url: '/api/endpoint',
-  method: 'GET',
-  data: { key: 'value' },
-  headers: { 'Custom-Header': 'value' },
-  timeout: 30000
-});
-```
-
-**参数说明：**
-- `url`: 请求地址
-- `method`: 请求方法，默认为 'GET'
-- `data`: 请求数据，GET 请求会转为 params
-- `headers`: 请求头，默认包含 'Content-Type': 'application/json'
-- `timeout`: 超时时间，默认 30000ms
-
-##### request 内置拦截器，仅允许使用以下五类数据接口
-- 自定义 API：/rest/data/v2.0/scripts
-- 获取自定义 API 列表：/rest/metadata/v2.0/dx/logic/extpoints/openapi
-- 实体类 open api：/rest/data/v2.0/xobjects
-- 实体列表接口：/rest/metadata/v2.0/xobjects/filter
-- 通用查询接口：/rest/data/v2/query
 
 ### 业务对象相关接口
 
@@ -57,7 +24,7 @@ const result = await xObject.query({
   fields: ['name', 'phone', 'email'], // 查询字段
   page: 1, // 页码（可选）
   pageSize: 10, // 每页数量（可选）
-  orderBy: 'name asc' // 排序条件（可选）
+  orderBy: 'id asc' // 排序条件（可选，仅支持 id）
 });
 
 // where 为字符串：与通用查询 SQL 语法一致，直接拼接到 `select ... from ...` 之后
@@ -84,11 +51,46 @@ const byArray = await xObject.query({
 - `xObjectApiKey`: 业务对象的 API Key
 - `fields`: 需要查询的字段数组，会自动添加 'id' 字段
 - `where`（可选）: 过滤条件。
-  - **字符串**：完整 `WHERE` 子句内容（不含关键字 `where`），语法与平台通用查询一致，支持 `=`、`!=`、`like`、`in`、`and`、`or` 等（详见接口注释）。
-  - **字符串数组**：每个元素为一段条件表达式；SDK 会用 ` and ` 按顺序拼接。空串、`null`、`undefined` 会被忽略。若需 `or` 或复杂嵌套，请使用字符串形式在一条表达式里写出，例如 `(a = 1 or b = 2) and c = 3`。
+  - **字符串**：完整 `WHERE` 子句内容（不含关键字 `where`），语法与平台通用查询一致（详见下文「查询条件与 SQL 说明」）。
+  - **字符串数组**：每个元素为一段条件表达式；默认会用 ` and ` 按顺序拼接。空串、`null`、`undefined` 会被忽略。若需 `or` 或复杂嵌套，请使用字符串形式在一条表达式里写出，例如 `(a = 1 or b = 2) and c = 3`。
 - `page`: 页码，默认为 1
 - `pageSize`: 每页数量，默认为 10
-- `orderBy`: 排序条件，如 'name asc' 或 'createdTime desc'
+- `orderBy`: 排序条件，仅支持对 `id` 字段排序，例如 `id asc` 或 `id desc`。
+
+**查询条件与 SQL 说明（与 `/rest/data/v2/query` 通用查询一致）：**
+
+xObject.query 会将 `fields`、`xObjectApiKey`、`where`、`orderBy` 与分页参数拼装为 SQL，通过请求参数 `q` 提交。下列限制与说明适用于该查询能力。
+
+**查询条件中不支持的字段类型**
+
+多选、文本域、地理位置、图片、引用。
+
+**select 子句**
+- 根据 fields 配置生成；
+- 不支持使用 `*` 查询全部列，须显式列出字段。通过 `fields` 数组指定列，并会自动加入 `id`（若未传入），生成的 `select` 不含 `*`。
+
+**from 子句**
+- 根据 xObjectApiKey 配置生成；
+- 目前支持查询：**所有自定义对象**，以及**本章文档所涉及的标准对象**的数据。
+
+**where 子句**
+- 根据 where 配置生成；
+- 各对象的字段信息可通过该对象的 **description** 接口获取。
+- **不支持**对「包含多个值的字段」做取值条件查询，这类字段**只能**使用 `is null` 或 `is not null`。
+- **支持的操作符**：`=`、`!=`、`like`、`not like`、`not in`、`is not null`、`is null`、`>`、`<`、`<>`、`>=`、`<=`、`in`、`between ... and ...`。
+- **对 `=`、`like`、`in` 的补充说明**：
+  - **`=`**（字符串条件）表示**精确匹配**。例如 `city = '北京'` 仅返回 `city` 严格等于「北京」的记录。
+  - **`like`**（字符串条件）须使用 `%` 做模糊匹配，例如 `city like '北京%'` 表示以「北京」**开头**。当前**仅支持**把通配符 `%` 放在**已知内容之后**（如 `'北京%'`），**不支持**类似 `city like '%北京'` 的写法。
+  - 当 SQL 中含 `%` 等特殊字符时，须对 SQL 做 **URL 编码**。SDK 使用 GET，将拼装后的 SQL 作为查询参数 `q` 发出（axios 会对 `params` 序列化；若自行拼接完整 URL，请确保编码正确）。
+  - **支持 `in`**，但**不支持**子查询形式的 `in (...)`。
+- **逻辑运算符**：`and`、`or`。
+
+**order by 子句**
+- 根据 orderBy 配置生成；
+- 支持 `desc`（降序）与 `asc`（升序）；**当前仅支持对 `id` 字段排序**。可在获取列表数据后自行实现其他字段排序。
+
+**limit 子句**
+- 根据 page 和 pageSize 配置生成。
 
 **返回结果：**
 ```typescript
@@ -379,6 +381,41 @@ const {data: apiList} = await customApi.getList({
 });
 ```
 
+### 基础请求工具
+如果以上方法不够用，可使用 request 方法自行实现特殊业务逻辑的数据请求。
+
+#### request
+基于 axios 封装的通用请求工具，支持 GET、POST、PATCH、DELETE 等请求方法。
+
+```typescript
+import { request } from 'neo-open-api';
+
+// 基本用法
+const result = await request({
+  url: '/api/endpoint',
+  method: 'GET',
+  data: { key: 'value' },
+  headers: { 'Custom-Header': 'value' },
+  timeout: 30000
+});
+```
+
+**参数说明：**
+- `url`: 请求地址
+- `method`: 请求方法，默认为 'GET'
+- `data`: 请求数据，GET 请求会转为 params
+- `headers`: 请求头，默认包含 'Content-Type': 'application/json'
+- `timeout`: 超时时间，默认 30000ms
+
+##### request 内置拦截器，仅允许使用以下五类数据接口
+- 自定义 API：/rest/data/v2.0/scripts
+- 获取自定义 API 列表：/rest/metadata/v2.0/dx/logic/extpoints/openapi
+- 实体类 open api：/rest/data/v2.0/xobjects
+- 实体列表接口：/rest/metadata/v2.0/xobjects/filter
+- 通用查询接口：/rest/data/v2/query
+- BI侧相关接口: /rest/neobi/v2.0
+- AI侧相关接口: /rest/ai/v2.0/agent
+
 ### 业务对象相关接口使用示例
 
 ```typescript
@@ -390,7 +427,7 @@ const {data: contacts} = await xObject.query({
   fields: ['name', 'phone', 'email'],
   page: 1,
   pageSize: 20,
-  orderBy: 'createdAt desc'
+  orderBy: 'id desc'
 });
 
 // 创建新联系人

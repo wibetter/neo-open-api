@@ -475,7 +475,9 @@ var whitelist = ['/rest/data/v2.0/scripts',
 // 通用查询接口
 '/rest/metadata/v2.0/xobjects/filter',
 // 获取实体列表
-'/rest/neobi/v2.0' // BI侧相关
+'/rest/neobi/v2.0',
+// BI侧相关
+'/rest/ai/v2.0/agent' // AI侧相关
 ];
 var isAllowDataApi = function isAllowDataApi(api) {
   // 判断是否在浏览器环境中
@@ -612,10 +614,7 @@ var queryXObjectData = /*#__PURE__*/function () {
           }
           // 计算分页偏移量
           offset = (page - 1) * pageSize; // 构建 SQL 查询
-          querySql = "select " + fields.join(',') + " from " + xObjectApiKey; // 添加排序条件（如果有的话）
-          if (curOptions.orderBy) {
-            querySql += " order by " + curOptions.orderBy;
-          }
+          querySql = "select " + fields.join(',') + " from " + xObjectApiKey;
           /**
            * 添加过滤条件（如果有的话）
            * 支持的操作符包括：=、!=、like、not like、not in、is not null、is null、>、<、<>、>=、<=、in、between ... and ...。
@@ -630,9 +629,12 @@ var queryXObjectData = /*#__PURE__*/function () {
            * `where` 可为字符串，或字符串数组（多项默认以 and 连接，等价于手写 `a and b`）。
            */
           whereClause = normalizeWhere(curOptions.where);
-          console.log('whereClause:', whereClause);
           if (whereClause) {
             querySql += " where " + whereClause;
+          }
+          // 添加排序条件（如果有的话）
+          if (curOptions.orderBy) {
+            querySql += " order by " + curOptions.orderBy;
           }
           if (curOptions.page || curOptions.pageSize) {
             // 添加分页限制

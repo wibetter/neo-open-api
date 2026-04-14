@@ -6,6 +6,7 @@ const whitelist = [
   '/rest/data/v2/query', // 通用查询接口
   '/rest/metadata/v2.0/xobjects/filter', // 获取实体列表
   '/rest/neobi/v2.0', // BI侧相关
+  '/rest/ai/v2.0/agent', // AI侧相关
 ];
 
 export const isAllowDataApi = (api: string) => {
