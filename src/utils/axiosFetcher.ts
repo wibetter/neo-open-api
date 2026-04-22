@@ -25,7 +25,12 @@ const axiosFetcher = async (options: any) => {
     }
 
     const response = await axios(config);
-    return response?.data || {};
+    const body = response?.data;
+    // 保留 []、0、false 等合法 JSON 体；与 || {} 不同，空数组应原样返回（直接返回列表的接口）
+    if (body === undefined || body === null) {
+      return {};
+    }
+    return body;
   } catch (error) {
     if (error.response) {
       // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围

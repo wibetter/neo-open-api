@@ -526,7 +526,7 @@ var isAllowDataApi = function isAllowDataApi(api) {
 // 创建基于 axios 的 fetcher 函数
 var axiosFetcher = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime.mark(function _callee(options) {
-    var config, response, _t;
+    var config, response, body, _t;
     return _regeneratorRuntime.wrap(function (_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
@@ -553,9 +553,16 @@ var axiosFetcher = /*#__PURE__*/function () {
           return axios(config);
         case 2:
           response = _context.sent;
-          return _context.abrupt("return", (response === null || response === void 0 ? void 0 : response.data) || {});
+          body = response === null || response === void 0 ? void 0 : response.data; // 保留 []、0、false 等合法 JSON 体；与 || {} 不同，空数组应原样返回（直接返回列表的接口）
+          if (!(body === undefined || body === null)) {
+            _context.next = 3;
+            break;
+          }
+          return _context.abrupt("return", {});
         case 3:
-          _context.prev = 3;
+          return _context.abrupt("return", body);
+        case 4:
+          _context.prev = 4;
           _t = _context["catch"](0);
           if (_t.response) {
             // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
@@ -567,11 +574,11 @@ var axiosFetcher = /*#__PURE__*/function () {
             console.error('接口请求报错:', _t, '，请求参数:', options);
           }
           throw _t;
-        case 4:
+        case 5:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 3]]);
+    }, _callee, null, [[0, 4]]);
   }));
   return function axiosFetcher(_x) {
     return _ref.apply(this, arguments);
@@ -1180,11 +1187,20 @@ var runCustomApi = /*#__PURE__*/function () {
           return axiosFetcher(config);
         case 2:
           resultData = _context2.sent;
+          if (!Array.isArray(resultData)) {
+            _context2.next = 3;
+            break;
+          }
+          return _context2.abrupt("return", {
+            status: true,
+            data: resultData
+          });
+        case 3:
           return _context2.abrupt("return", _extends({
             status: true
           }, resultData));
-        case 3:
-          _context2.prev = 3;
+        case 4:
+          _context2.prev = 4;
           _t2 = _context2["catch"](1);
           console.error('执行自定义API失败:', _t2);
           return _context2.abrupt("return", {
@@ -1192,11 +1208,11 @@ var runCustomApi = /*#__PURE__*/function () {
             msg: _t2.msg || _t2.message || '执行自定义API失败',
             data: {}
           });
-        case 4:
+        case 5:
         case "end":
           return _context2.stop();
       }
-    }, _callee2, null, [[1, 3]]);
+    }, _callee2, null, [[1, 4]]);
   }));
   return function runCustomApi(_x2) {
     return _ref3.apply(this, arguments);

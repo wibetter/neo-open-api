@@ -72,6 +72,14 @@ export const runCustomApi = async (options: any) => {
 
     const resultData = await axiosFetcher(config);
 
+    // 响应体为 JSON 数组时，与 { code, data } 等对象形态统一为 { status, data }
+    if (Array.isArray(resultData)) {
+      return {
+        status: true,
+        data: resultData,
+      };
+    }
+
     return {
       status: true,
       ...resultData,
