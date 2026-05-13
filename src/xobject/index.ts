@@ -188,6 +188,7 @@ export const updateXObject = async (
 interface XObjectApiKey {
   xObjectApiKey?: string;
   objectId?: string;
+  xObjectId?: string;
   options?: any;
 }
 
@@ -202,7 +203,7 @@ export const getXObject = async (
   let curOptions = options || {};
   if (typeof xObjectApiKey === 'object' && xObjectApiKey.xObjectApiKey) {
     curOptions = xObjectApiKey.options || {};
-    curObjectId = xObjectApiKey.objectId;
+    curObjectId = xObjectApiKey.objectId || xObjectApiKey.xObjectId;
     curXObjectApiKey = xObjectApiKey.xObjectApiKey;
   }
   const apiUrl = `/rest/data/v2.0/xobjects/${curXObjectApiKey}/${curObjectId}`;

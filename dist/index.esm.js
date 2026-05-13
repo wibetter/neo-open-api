@@ -944,7 +944,7 @@ var getXObject = /*#__PURE__*/function () {
           curOptions = options || {};
           if (typeof xObjectApiKey === 'object' && xObjectApiKey.xObjectApiKey) {
             curOptions = xObjectApiKey.options || {};
-            curObjectId = xObjectApiKey.objectId;
+            curObjectId = xObjectApiKey.objectId || xObjectApiKey.xObjectId;
             curXObjectApiKey = xObjectApiKey.xObjectApiKey;
           }
           apiUrl = "/rest/data/v2.0/xobjects/" + curXObjectApiKey + "/" + curObjectId;
