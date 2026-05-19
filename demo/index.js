@@ -163,6 +163,7 @@ const result5 = await request({
 console.log('result5:', result5);
 */
 
+/*
 const result6 = xObject.query({
   xObjectApiKey: "AssetItem__c",
   fields: [
@@ -182,4 +183,8 @@ const result6 = xObject.query({
 });
 
 console.log('result6:', result6);
+*/
 
+// 获取对象字段列表
+const result9 = await xObject.getFileds('opportunity');
+console.log('result9:', result9);

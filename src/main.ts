@@ -11,6 +11,7 @@ import {
   getXObject,
   deleteXObject,
   getXObjectDesc,
+  getXObjectFields,
 } from '$xObject/index';
 
 import { getCustomApiList, runCustomApi } from '$customApi/index';
@@ -21,6 +22,7 @@ const xObject = {
   getEntityTypeList,
   getEntityList,
   getDesc: getXObjectDesc,
+  getFileds: getXObjectFields,
   create: createXObject,
   update: updateXObject,
   get: getXObject,

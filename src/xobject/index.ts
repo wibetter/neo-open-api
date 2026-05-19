@@ -72,7 +72,7 @@ export const getEntityList = async (options?: any) => {
       return {
         status: true,
         code: resultData.code,
-        msg: resultData.msg || '获取对象列表成功',
+        msg: resultData.msg || '获取实体列表成功',
         totalSize,
         data: records || [],
       };
@@ -81,15 +81,15 @@ export const getEntityList = async (options?: any) => {
     return {
       status: false,
       code: resultData.code,
-      msg: resultData.msg || '获取对象列表失败',
+      msg: resultData.msg || '获取实体列表失败',
       data: [],
     };
   } catch (error) {
-    console.error('获取对象列表失败:', error);
+    console.error('获取实体列表失败:', error);
 
     return {
       status: false,
-      msg: error.msg || error.message || '获取对象列表失败',
+      msg: error.msg || error.message || '获取实体列表失败',
       data: [],
     };
   }
@@ -192,7 +192,7 @@ interface XObjectApiKey {
   options?: any;
 }
 
-// 获取业务数据详情信息
+// 获取业务对象详情数据
 export const getXObject = async (
   xObjectApiKey: string | XObjectApiKey,
   objectId?: string,
@@ -220,7 +220,7 @@ export const getXObject = async (
       return {
         status: true,
         code: resultData.code,
-        msg: resultData.msg || '获取业务数据成功',
+        msg: resultData.msg || '获取业务对象详情数据成功',
         data: resultData.data || {},
       };
     }
@@ -228,15 +228,15 @@ export const getXObject = async (
     return {
       status: false,
       code: resultData.code,
-      msg: resultData.msg || '获取业务数据失败',
+      msg: resultData.msg || '获取业务对象详情数据失败',
       data: {},
     };
   } catch (error) {
-    console.error('获取业务数据失败:', error);
+    console.error('获取业务对象详情数据失败:', error);
 
     return {
       status: false,
-      msg: error.msg || error.message || '获取业务数据失败',
+      msg: error.msg || error.message || '获取业务对象详情数据失败',
       data: {},
     };
   }
@@ -317,6 +317,51 @@ export const getXObjectDesc = async (xObjectApiKey: string, options?: any) => {
       status: false,
       msg: error.msg || error.message || '获取业务对象描述数据失败',
       data: {},
+    };
+  }
+};
+
+// 获取业务对象字段列表
+export const getXObjectFields = async (
+  xObjectApiKey: string,
+  options?: any,
+) => {
+  const curOptions = options || {};
+  const apiUrl = `/rest/data/v2.0/xobjects/${xObjectApiKey}/description`;
+  try {
+    const config = {
+      ...options,
+      url: apiUrl,
+      method: curOptions.method || 'GET',
+    };
+
+    const resultData = await axiosFetcher(config);
+
+    if (resultData.code === '200' || resultData.code === 200) {
+      // 获取字段列表
+      const fields = resultData.data?.fields || [];
+
+      return {
+        status: true,
+        code: resultData.code,
+        msg: resultData.msg || '获取实体字段列表成功',
+        data: fields,
+      };
+    }
+
+    return {
+      status: false,
+      code: resultData.code,
+      msg: resultData.msg || '获取实体字段列表失败',
+      data: [],
+    };
+  } catch (error) {
+    console.error('获取实体字段列表失败:', error);
+
+    return {
+      status: false,
+      msg: error.msg || error.message || '获取实体字段列表失败',
+      data: [],
     };
   }
 };

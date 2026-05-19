@@ -786,7 +786,7 @@ var getEntityList = /*#__PURE__*/function () {
           return _context2.abrupt("return", {
             status: true,
             code: resultData.code,
-            msg: resultData.msg || '获取对象列表成功',
+            msg: resultData.msg || '获取实体列表成功',
             totalSize: totalSize,
             data: records || []
           });
@@ -794,16 +794,16 @@ var getEntityList = /*#__PURE__*/function () {
           return _context2.abrupt("return", {
             status: false,
             code: resultData.code,
-            msg: resultData.msg || '获取对象列表失败',
+            msg: resultData.msg || '获取实体列表失败',
             data: []
           });
         case 4:
           _context2.prev = 4;
           _t2 = _context2["catch"](1);
-          console.error('获取对象列表失败:', _t2);
+          console.error('获取实体列表失败:', _t2);
           return _context2.abrupt("return", {
             status: false,
-            msg: _t2.msg || _t2.message || '获取对象列表失败',
+            msg: _t2.msg || _t2.message || '获取实体列表失败',
             data: []
           });
         case 5:
@@ -932,7 +932,7 @@ var updateXObject = /*#__PURE__*/function () {
     return _ref6.apply(this, arguments);
   };
 }();
-// 获取业务数据详情信息
+// 获取业务对象详情数据
 var getXObject = /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime.mark(function _callee5(xObjectApiKey, objectId, options) {
     var curXObjectApiKey, curObjectId, curOptions, apiUrl, config, resultData, _t5;
@@ -964,23 +964,23 @@ var getXObject = /*#__PURE__*/function () {
           return _context5.abrupt("return", {
             status: true,
             code: resultData.code,
-            msg: resultData.msg || '获取业务数据成功',
+            msg: resultData.msg || '获取业务对象详情数据成功',
             data: resultData.data || {}
           });
         case 3:
           return _context5.abrupt("return", {
             status: false,
             code: resultData.code,
-            msg: resultData.msg || '获取业务数据失败',
+            msg: resultData.msg || '获取业务对象详情数据失败',
             data: {}
           });
         case 4:
           _context5.prev = 4;
           _t5 = _context5["catch"](1);
-          console.error('获取业务数据失败:', _t5);
+          console.error('获取业务对象详情数据失败:', _t5);
           return _context5.abrupt("return", {
             status: false,
-            msg: _t5.msg || _t5.message || '获取业务数据失败',
+            msg: _t5.msg || _t5.message || '获取业务对象详情数据失败',
             data: {}
           });
         case 5:
@@ -1096,6 +1096,62 @@ var getXObjectDesc = /*#__PURE__*/function () {
   }));
   return function getXObjectDesc(_x13, _x14) {
     return _ref9.apply(this, arguments);
+  };
+}();
+// 获取业务对象字段列表
+var getXObjectFields = /*#__PURE__*/function () {
+  var _ref0 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime.mark(function _callee8(xObjectApiKey, options) {
+    var curOptions, apiUrl, config, resultData, _resultData$data, fields, _t8;
+    return _regeneratorRuntime.wrap(function (_context8) {
+      while (1) switch (_context8.prev = _context8.next) {
+        case 0:
+          curOptions = options || {};
+          apiUrl = "/rest/data/v2.0/xobjects/" + xObjectApiKey + "/description";
+          _context8.prev = 1;
+          config = _extends({}, options, {
+            url: apiUrl,
+            method: curOptions.method || 'GET'
+          });
+          _context8.next = 2;
+          return axiosFetcher(config);
+        case 2:
+          resultData = _context8.sent;
+          if (!(resultData.code === '200' || resultData.code === 200)) {
+            _context8.next = 3;
+            break;
+          }
+          // 获取字段列表
+          fields = ((_resultData$data = resultData.data) === null || _resultData$data === void 0 ? void 0 : _resultData$data.fields) || [];
+          return _context8.abrupt("return", {
+            status: true,
+            code: resultData.code,
+            msg: resultData.msg || '获取实体字段列表成功',
+            data: fields
+          });
+        case 3:
+          return _context8.abrupt("return", {
+            status: false,
+            code: resultData.code,
+            msg: resultData.msg || '获取实体字段列表失败',
+            data: []
+          });
+        case 4:
+          _context8.prev = 4;
+          _t8 = _context8["catch"](1);
+          console.error('获取实体字段列表失败:', _t8);
+          return _context8.abrupt("return", {
+            status: false,
+            msg: _t8.msg || _t8.message || '获取实体字段列表失败',
+            data: []
+          });
+        case 5:
+        case "end":
+          return _context8.stop();
+      }
+    }, _callee8, null, [[1, 4]]);
+  }));
+  return function getXObjectFields(_x15, _x16) {
+    return _ref0.apply(this, arguments);
   };
 }();
 
@@ -1228,6 +1284,7 @@ var xObject = {
   getEntityTypeList: getEntityTypeList,
   getEntityList: getEntityList,
   getDesc: getXObjectDesc,
+  getFileds: getXObjectFields,
   create: createXObject,
   update: updateXObject,
   get: getXObject,
